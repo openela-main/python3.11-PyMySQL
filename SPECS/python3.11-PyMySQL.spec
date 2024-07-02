@@ -5,12 +5,17 @@
 
 Name:           python%{python3_pkgversion}-%{pypi_name}
 Version:        1.0.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Pure-Python MySQL client library
 
 License:        MIT
 URL:            https://pypi.python.org/pypi/%{pypi_name}/
 Source0:        %pypi_source
+
+# Security fix for CVE-2024-36039: SQL injection if used with untrusted JSON input
+# Resolved upstream: https://github.com/PyMySQL/PyMySQL/commit/521e40050cb386a499f68f483fefd144c493053c
+# Tracking bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=2282821
+Patch0:         CVE-2024-36039.patch
 
 BuildArch:      noarch
 
@@ -33,7 +38,7 @@ and Jython.
 
 
 %prep
-%setup -qn %{pypi_name}-%{version}
+%autosetup -n %{pypi_name}-%{version} -p1
 rm -rf %{pypi_name}.egg-info
 # Remove tests files so they are not installed globally.
 rm -rf tests
@@ -58,6 +63,10 @@ rm -rf tests
 %{python3_sitelib}/pymysql/
 
 %changelog
+* Fri May 31 2024 Charalampos Stratakis <cstratak@redhat.com> - 1.0.2-2
+- Security fix for CVE-2024-36039
+Resolves: RHEL-38365
+
 * Wed Nov 30 2022 Charalampos Stratakis <cstratak@redhat.com> - 1.0.2-1
 - Initial package
 - Fedora contributions by:
